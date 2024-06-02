@@ -7,6 +7,7 @@ library(geomtextpath)
 gases <- read_csv("C:/Users/mikpz/Documents/Data/tp_final/dataset/gases_sincero_19.csv")
 particulas <- particulas19
 glimpse(gases)
+gas_no2_co_clean <- na.omit(gas_no2_co[, c("NO2", "CO", "season", "region")]) ## no se pueede hacer poly con NA
 
 gases[c("day", "month","year")] <- lapply(gases[c("day", "month","year")], as.factor)
 gases[c("station_code", "hour","item_code","season","region")] <- lapply(gases[c("station_code", "hour","item_code","season","region")], as.factor)
@@ -304,5 +305,13 @@ NO2_CO_timeline <- ggplot(gas_no2_co, aes(x = fecha)) +
   facet_grid(~region) +
   scale_color_manual(name = "Gases", values = c("NO2" = "blue", "CO" = "red")) +
   theme_minimal()
+
+############----  polys y log -------------------------
+
+mod_7 <- lm(NO2 ~ poly(CO, 2) + season + region, data = gas_no2_co_clean)
+summary(mod_7)
+plot(mod_7)
+mod_8 <- lm(log(NO2) ~ CO + season + region, data = gas_no2_co)
+
 
 
